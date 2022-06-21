@@ -104,6 +104,16 @@ void setup()
 
   //setup used pins
   pinMode(BUILTIN_LED, OUTPUT);
+  pinMode(D0,OUTPUT);
+  pinMode(D1,OUTPUT);
+  pinMode(D2,OUTPUT);
+  pinMode(D3,OUTPUT);
+  pinMode(D4,OUTPUT);
+  pinMode(D5,OUTPUT);
+  pinMode(D6,OUTPUT);
+  pinMode(D7,OUTPUT);
+  pinMode(D8,OUTPUT);
+  
 
   //WiFi setup
   Serial.print("Connecting to "); Serial.print(ssid);
@@ -155,18 +165,18 @@ void msgReceived(char* topic, byte* payload, unsigned int length)
     digitalWrite(BUILTIN_LED, HIGH);
   }
 
- /* else if (strcmp(topic, "/home/room1/fan") == 0)
+  else if (strcmp(topic, "home/node1/pinD0") == 0)
   {
-    if (messageTemp == "ON")
-     digitalWrite(relay2, HIGH);
+    if (doc["message"] == "ON")
+    digitalWrite(D0, HIGH);
 
-    else
-     digitalWrite(relay2, LOW);
+   else
+    digitalWrite(D0, LOW);
   }
 
   else
      Serial.println();
-     */
+     
 }
 
 
