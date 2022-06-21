@@ -99,7 +99,7 @@ PubSubClient pubSubClient(awsEndpoint, 8883, msgReceived, wiFiClient);
 
 void setup()
 {
-  Serial.begin(115200);
+  Serial.begin(9600);
   Serial.println();
 
   //setup used pins
@@ -113,6 +113,8 @@ void setup()
   pinMode(D6,OUTPUT);
   pinMode(D7,OUTPUT);
   pinMode(D8,OUTPUT);
+  pinMode(D9,OUTPUT);
+  pinMode(D10,OUTPUT);
   
 
   //WiFi setup
@@ -151,34 +153,23 @@ void msgReceived(char* topic, byte* payload, unsigned int length)
 {
   //printing topic name
   Serial.print("Message received on ");
-  Serial.print(topic);
+  Serial.println(topic);
   StaticJsonDocument<256> doc;
   deserializeJson(doc, payload, length);
-  
- //Checking for all important topics, if statement for each topic
-  if (strcmp(topic, "home/node1/led") == 0)
-  {
-   if (doc["message"] == "ON")
-    digitalWrite(BUILTIN_LED, LOW);
 
-   else
-    digitalWrite(BUILTIN_LED, HIGH);
-  }
+  static const uint8_t NAME2PIN[] = {D0, D1, D2, D3, D4, D5, D6, D7, D8, D9, D10};
 
-  else if (strcmp(topic, "home/node1/pinD0") == 0)
-  {
-    if (doc["message"] == "ON")
-    digitalWrite(D0, HIGH);
-
-   else
-    digitalWrite(D0, LOW);
-  }
-
+  String strPin;
+  //topics are in this pattern home/node1/D#
+  for (int i =12; i <13; i++) 
+    strPin += topic[12];
+  uint8_t pin  = NAME2PIN[strPin.toInt()]; 
+  Serial.println(pin);
+  if (doc["message"] == "ON")
+      digitalWrite(pin, HIGH);
   else
-     Serial.println();
-     
+      digitalWrite(pin, LOW);
 }
-
 
 
 void pubSubCheckConnect()
@@ -197,7 +188,7 @@ void pubSubCheckConnect()
 
     Serial.println(" connected");
 
-    //that means that the ESP is subscribing to all topics which begin with /home/anyThingElse
+    //the ESP is subscribing to all topics which begin with home/node1/anyThingElse
     pubSubClient.subscribe("home/node1/#");
   }
 
