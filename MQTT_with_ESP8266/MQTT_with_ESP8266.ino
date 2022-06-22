@@ -1,6 +1,8 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
+#define Sensor D0
+
 
 const char* ssid = "SABEK 9090";
 const char* password = "77777777";
@@ -104,7 +106,7 @@ void setup()
 
   //setup used pins
   pinMode(BUILTIN_LED, OUTPUT);
-  pinMode(D0,OUTPUT);
+  pinMode(D0,INPUT);
   pinMode(D1,OUTPUT);
   pinMode(D2,OUTPUT);
   pinMode(D3,OUTPUT);
@@ -140,9 +142,14 @@ void loop()
 // publish data each 10 sec
   if (millis() - lastPublish > 10000)
   {
-    String msg = String("Hello from ESP8266 this is sirsabek") + ++msgCount;
-    pubSubClient.publish("outTopic", msg.c_str());
-    Serial.print("Published: "); Serial.println(msg);
+    char Data[128];
+    // allocate the memory for the document
+    float var1 =  random(55,77); //fake number range, adjust as you like
+    float var2 =  random(77,99);
+    sprintf(Data,  "{\"uptime\":%lu,\"temp\":%f,\"humid\":%f}", millis() / 1000, var1, var2);
+    pubSubClient.publish("outTopic",Data);
+    Serial.print("Published: "); 
+    Serial.println(Data);
     lastPublish = millis();
   }
 }
